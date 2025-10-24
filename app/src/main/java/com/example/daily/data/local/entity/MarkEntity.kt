@@ -18,6 +18,6 @@ data class MarkEntity(
     @PrimaryKey(autoGenerate = true) val id: Int = 0,
     val parentKey: String,
     val subKey: String,
-    val color: String,
+    val color: Int,
     val description: String
 )

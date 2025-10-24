@@ -4,6 +4,6 @@ import androidx.compose.ui.graphics.Color
 
 data class Mark(
     val topic: String,
-    val color: String,
+    val color: Int,
     val description: String
 )

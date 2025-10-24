@@ -7,6 +7,7 @@ import com.example.daily.data.local.dao.MarkDao
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
 
@@ -15,7 +16,7 @@ import javax.inject.Singleton
 object DatabaseModule {
     @Provides
     @Singleton
-    fun provideDailyDatabase(appContext: Context) : DailyDatabase =
+    fun provideDailyDatabase(@ApplicationContext appContext: Context) : DailyDatabase =
         Room.databaseBuilder(appContext, DailyDatabase::class.java, "daily_db")
             .fallbackToDestructiveMigration(false)
             .build()

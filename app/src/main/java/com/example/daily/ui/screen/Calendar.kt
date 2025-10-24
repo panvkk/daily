@@ -1,5 +1,7 @@
 package com.example.daily.ui.screen
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -9,6 +11,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
@@ -23,7 +26,6 @@ import com.kizitonwose.calendar.core.CalendarDay
 import com.kizitonwose.calendar.core.CalendarMonth
 import com.kizitonwose.calendar.core.DayPosition
 import com.kizitonwose.calendar.core.firstDayOfWeekFromLocale
-import java.time.DayOfWeek
 import java.time.Year
 import java.time.YearMonth
 import java.time.format.TextStyle
@@ -31,7 +33,7 @@ import java.util.Locale
 
 @Composable
 fun DailyCalendar(
-    isDayMarked: (CalendarDay) -> Boolean,
+    getMarkColor: (CalendarDay) -> Int?,
     isDaySelected: (CalendarDay) -> Boolean,
     onDayClicked: (CalendarDay) -> Unit
 ) {
@@ -53,8 +55,8 @@ fun DailyCalendar(
             Day(
                 it,
                 isSelected = isDaySelected(it),
-                isMarked = isDayMarked(it),
-                onClickBehavior = onDayClicked(it)
+                onClickBehavior = onDayClicked(it),
+                markColor = getMarkColor(it)
             )
         },
         monthHeader = {
@@ -110,13 +112,15 @@ private fun YearHeader(year: Year) {
 @Composable
 fun Day(
     day: CalendarDay,
+    markColor: Int?,
     isSelected: Boolean,
-    isMarked: Boolean,
     onClickBehavior: Unit
 ) {
     Box(
         modifier = Modifier
-            .aspectRatio(1f), // This is important for square sizing!
+            .aspectRatio(1f) // This is important for square sizing!
+            .clickable { if(!isSelected) { onClickBehavior } }
+            .background(if(markColor != null) Color(markColor) else MaterialTheme.colorScheme.background),
         contentAlignment = Alignment.Center
     ) {
         Text(

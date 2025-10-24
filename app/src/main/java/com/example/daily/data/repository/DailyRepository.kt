@@ -6,17 +6,21 @@ import com.example.daily.data.local.entity.MarkEntity
 import com.example.daily.model.Date
 import com.example.daily.model.Mark
 import kotlinx.coroutines.flow.map
+import javax.inject.Inject
 
-class DailyRepository(private val markDao: MarkDao) {
+class DailyRepository @Inject constructor(
+    private val markDao: MarkDao
+) {
     fun getAllMarksByTopic(topic: String) =
         markDao.getAllMarksByTopic(topic)
             .map { entityList ->
-                entityList.map { markEntity ->
-                    Mark(
-                        markEntity.subKey,
-                        markEntity.color,
-                        markEntity.description
-                    )
+                entityList.associate { markEntity ->
+                    markEntity.parentKey to
+                            Mark(
+                                markEntity.subKey,
+                                markEntity.color,
+                                markEntity.description
+                            )
                 }
             }
 
