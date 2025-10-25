@@ -1,23 +1,12 @@
 package com.example.daily.data.local.entity
 
 import androidx.room.Entity
-import androidx.room.ForeignKey
-import androidx.room.ForeignKey.Companion.CASCADE
 import androidx.room.PrimaryKey
 
-@Entity(
-    tableName = "mark_table",
-    foreignKeys = [ForeignKey(
-        entity = DateEntity::class,
-        parentColumns = ["date"],
-        childColumns = ["parentKey"],
-        onDelete = CASCADE
-    )]
-)
+@Entity(tableName = "mark_table",)
 data class MarkEntity(
     @PrimaryKey(autoGenerate = true) val id: Int = 0,
-    val parentKey: String,
-    val subKey: String,
-    val color: Int,
-    val description: String
+    val date: String,
+    val topic: String,
+    val color: Long,
 )

@@ -1,9 +1,8 @@
 package com.example.daily.model
 
-import androidx.compose.ui.graphics.Color
 
 data class Mark(
+    val date: String,
     val topic: String,
-    val color: Int,
-    val description: String
+    val color: Long,
 )

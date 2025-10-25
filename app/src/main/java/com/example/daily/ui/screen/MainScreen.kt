@@ -14,10 +14,10 @@ import com.example.daily.ui.viewmodel.MainViewModel
 @Composable
 fun MainScreen(
     modifier: Modifier = Modifier,
-    viewModel: MainViewModel = hiltViewModel()
+    viewModel: MainViewModel
 ) {
-    val selectedDay = viewModel.selectedDay.collectAsState()
-    val uiState = viewModel.uiState.collectAsState()
+    val selectedDay = viewModel.selectedDay.collectAsState().value
+    val uiState = viewModel.uiState.collectAsState().value
 
     Column(
         modifier = modifier.padding(horizontal = 16.dp),
@@ -25,15 +25,18 @@ fun MainScreen(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         DailyCalendar(
-            isDaySelected = { day -> day == selectedDay.value },
+            isDaySelected = { day -> day == selectedDay },
             onDayClicked = { day -> viewModel.updateSelectedDay(day)},
-            getMarkColor = { day -> uiState.value[day.date.toString()]?.color }
+            getMarkColor = { day -> uiState[day.date.toString()] }
         )
-        val currentDay = selectedDay.value
-        if(currentDay != null) {
+        if(selectedDay != null) {
             DayPanel(
-                addMark = { color, description ->
-                    viewModel.addMark(currentDay, color, description)
+                day = selectedDay,
+                addMark = { color ->
+                    viewModel.addMark(selectedDay, color)
+                },
+                deleteMark = {
+                    viewModel.deleteMark(selectedDay)
                 }
             )
         }

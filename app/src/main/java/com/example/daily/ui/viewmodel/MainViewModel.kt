@@ -1,9 +1,9 @@
 package com.example.daily.ui.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.daily.data.repository.DailyRepository
-import com.example.daily.model.Date
 import com.example.daily.model.Mark
 import com.kizitonwose.calendar.core.CalendarDay
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -11,7 +11,9 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -22,9 +24,15 @@ class MainViewModel @Inject constructor(
     private val dailyRepository: DailyRepository
 ) : ViewModel() {
     private val _currentTopic = MutableStateFlow<String>(TOPIC)
-    val uiState: StateFlow<Map<String, Mark>> = _currentTopic
+    val currentTopic: StateFlow<String> = _currentTopic
+    val uiState: StateFlow<Map<String, Long>> = _currentTopic
         .flatMapLatest { topic ->
             dailyRepository.getAllMarksByTopic(topic)
+        }
+        .map { markList ->
+            markList.associate {
+                it.date to it.color
+            }
         }
         .stateIn(
             scope = viewModelScope,
@@ -36,19 +44,33 @@ class MainViewModel @Inject constructor(
     val selectedDay: StateFlow<CalendarDay?> = _selectedDay
 
     fun updateSelectedDay(day: CalendarDay) {
-        _selectedDay.value = day
+        _selectedDay.update { day }
     }
 
-    fun addMark(day: CalendarDay, color: Int, description: String) {
+    fun addMark(day: CalendarDay, color: Long) {
         viewModelScope.launch {
             dailyRepository.putMark(
-                Date(day.date.toString()),
                 Mark(
                     topic = _currentTopic.value,
                     color = color,
-                    description = description
+                    date = day.date.toString()
                 )
             )
+        }
+    }
+
+    fun deleteMark(day: CalendarDay) {
+        viewModelScope.launch {
+            val color = uiState.value[day.date.toString()]
+            if(color != null) {
+                dailyRepository.deleteMark(
+                    Mark(
+                        date = day.date.toString(),
+                        color = color,
+                        topic = _currentTopic.value
+                    )
+                )
+            }
         }
     }
 }

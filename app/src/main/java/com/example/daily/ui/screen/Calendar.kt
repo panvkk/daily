@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
@@ -33,7 +32,7 @@ import java.util.Locale
 
 @Composable
 fun DailyCalendar(
-    getMarkColor: (CalendarDay) -> Int?,
+    getMarkColor: (CalendarDay) -> Long?,
     isDaySelected: (CalendarDay) -> Boolean,
     onDayClicked: (CalendarDay) -> Unit
 ) {
@@ -54,9 +53,9 @@ fun DailyCalendar(
         dayContent = {
             Day(
                 it,
-                isSelected = isDaySelected(it),
-                onClickBehavior = onDayClicked(it),
-                markColor = getMarkColor(it)
+                isSelected = isDaySelected,
+                onClickBehavior = onDayClicked,
+                markColor = getMarkColor
             )
         },
         monthHeader = {
@@ -112,15 +111,17 @@ private fun YearHeader(year: Year) {
 @Composable
 fun Day(
     day: CalendarDay,
-    markColor: Int?,
-    isSelected: Boolean,
-    onClickBehavior: Unit
+    markColor: (CalendarDay) -> Long?,
+    isSelected: (CalendarDay) -> Boolean,
+    onClickBehavior: (CalendarDay) -> Unit
 ) {
+    val color = markColor(day)
+
     Box(
         modifier = Modifier
             .aspectRatio(1f) // This is important for square sizing!
-            .clickable { if(!isSelected) { onClickBehavior } }
-            .background(if(markColor != null) Color(markColor) else MaterialTheme.colorScheme.background),
+            .clickable { if(!isSelected(day)) { onClickBehavior(day) } }
+            .background(if(color != null && day.position == DayPosition.MonthDate) Color(color) else Color.Transparent),
         contentAlignment = Alignment.Center
     ) {
         Text(

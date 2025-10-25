@@ -5,49 +5,29 @@ import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.Query
 import androidx.room.Transaction
-import com.example.daily.data.local.entity.DateEntity
 import com.example.daily.data.local.entity.MarkEntity
-import com.example.daily.model.Mark
 import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface MarkDao {
-    @Query("SELECT * FROM mark_table WHERE subKey = :topic")
+    @Query("SELECT * FROM mark_table WHERE topic = :topic")
     fun getAllMarksByTopic(topic: String) : Flow<List<MarkEntity>>
 
     @Transaction
-    suspend fun putMark(dateEntity: DateEntity, markEntity: MarkEntity) {
-        if(isDateMarked(dateEntity.date)) {
-            insertOnlyMark(markEntity)
-        } else {
-            insertOnlyDate(dateEntity)
-            insertOnlyMark(markEntity)
-        }
+    suspend fun deleteMark(markNoId: MarkEntity) {
+        val id = getByInfo(color = markNoId.color, topic = markNoId.topic, date = markNoId.date).id
+        deleteMarkById(id)
     }
 
-    @Transaction
-    suspend fun deleteMark(dateEntity: DateEntity, markEntity: MarkEntity) {
-        deleteOnlyMark(markEntity)
-        if(isMarkEmpty(markEntity.parentKey)) {
-            deleteDate(dateEntity)
-        }
-    }
-
-    @Query("SELECT EXISTS(SELECT 1 FROM date_table WHERE date = :date)")
-    suspend fun isDateMarked(date: String) : Boolean
-
-    @Query("SELECT NOT EXISTS(SELECT 1 FROM mark_table WHERE parentKey = :parentKey)")
-    suspend fun isMarkEmpty(parentKey: String) : Boolean
+    @Query("SELECT * FROM mark_table WHERE " +
+            "color = :color AND " +
+            "topic = :topic AND " +
+            "date = :date")
+    suspend fun getByInfo(color: Long, topic: String, date: String) : MarkEntity
 
     @Insert
-    suspend fun insertOnlyDate(date: DateEntity)
+    suspend fun putMark(mark: MarkEntity)
 
-    @Delete
-    suspend fun deleteDate(date: DateEntity)
-
-    @Insert
-    suspend fun insertOnlyMark(mark: MarkEntity)
-
-    @Delete
-    suspend fun deleteOnlyMark(mark: MarkEntity)
+    @Query("DELETE FROM mark_table WHERE id = :id ")
+    suspend fun deleteMarkById(id: Int)
 }
