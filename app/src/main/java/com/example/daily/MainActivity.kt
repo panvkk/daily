@@ -7,19 +7,14 @@ import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.example.daily.ui.screen.MainScreen
-import com.example.daily.ui.screen.TopDailyBar
+import com.example.daily.ui.component.TopDailyBar
 import com.example.daily.ui.theme.DailyTheme
 import com.example.daily.ui.viewmodel.MainViewModel
 import dagger.hilt.android.AndroidEntryPoint
-import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.unit.dp
 
 @AndroidEntryPoint
@@ -30,6 +25,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             DailyTheme {
                 val viewModel: MainViewModel = hiltViewModel()
+
                 Scaffold(
                     modifier = Modifier
                         .fillMaxSize(),

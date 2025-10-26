@@ -1,4 +1,4 @@
-package com.example.daily.ui.screen
+package com.example.daily.ui.component
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable

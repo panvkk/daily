@@ -64,6 +64,12 @@ dependencies {
     implementation(libs.androidx.room.ktx)
     // ----
 
+    // Moshi
+    ksp(libs.moshi.codegen)
+    implementation(libs.moshi)
+    implementation(libs.moshi.kotlin)
+    // -----
+
     // Hilt
     ksp(libs.hilt.compiler)
     implementation(libs.hilt.android)

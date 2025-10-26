@@ -8,7 +8,8 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
+import com.example.daily.ui.component.DailyCalendar
+import com.example.daily.ui.component.DayPanel
 import com.example.daily.ui.viewmodel.MainViewModel
 
 @Composable
@@ -18,6 +19,14 @@ fun MainScreen(
 ) {
     val selectedDay = viewModel.selectedDay.collectAsState().value
     val uiState = viewModel.uiState.collectAsState().value
+    val showNewTopicDialog = viewModel.showDialogState.collectAsState().value
+
+    if(showNewTopicDialog) {
+        NewTopicDialog(
+            onDismiss = { viewModel.updateShowDialogState(false) },
+            onCreateTopic = { name -> viewModel.createTopic(name) }
+        )
+    }
 
     Column(
         modifier = modifier.padding(horizontal = 16.dp),
@@ -26,7 +35,7 @@ fun MainScreen(
     ) {
         DailyCalendar(
             isDaySelected = { day -> day == selectedDay },
-            onDayClicked = { day -> viewModel.updateSelectedDay(day)},
+            onDayClicked = { day -> viewModel.updateSelectedDay(day) },
             getMarkColor = { day -> uiState[day.date.toString()] }
         )
         if(selectedDay != null) {
