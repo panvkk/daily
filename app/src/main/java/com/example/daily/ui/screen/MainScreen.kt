@@ -20,6 +20,7 @@ fun MainScreen(
     val selectedDay = viewModel.selectedDay.collectAsState().value
     val uiState = viewModel.uiState.collectAsState().value
     val showNewTopicDialog = viewModel.showDialogState.collectAsState().value
+    val currentTopic = viewModel.currentTopic.collectAsState().value
 
     if(showNewTopicDialog) {
         NewTopicDialog(
@@ -46,7 +47,8 @@ fun MainScreen(
                 },
                 deleteMark = {
                     viewModel.deleteMark(selectedDay)
-                }
+                },
+                specs = currentTopic.specs
             )
         }
     }

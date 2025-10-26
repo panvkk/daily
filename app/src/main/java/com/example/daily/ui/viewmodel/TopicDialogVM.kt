@@ -9,7 +9,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class TopicDialogVM @Inject constructor() : ViewModel() {
-    private val _inputTopicName = MutableStateFlow<String>("")
+    private val _inputTopicName = MutableStateFlow("")
     val inputTopicName: StateFlow<String> = _inputTopicName
 
     fun updateInputTopicName(value: String) {

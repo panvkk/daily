@@ -16,6 +16,8 @@ import com.example.daily.ui.theme.DailyTheme
 import com.example.daily.ui.viewmodel.MainViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -24,26 +26,8 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             DailyTheme {
-                val viewModel: MainViewModel = hiltViewModel()
-
-                Scaffold(
-                    modifier = Modifier
-                        .fillMaxSize(),
-                    topBar = {
-                        TopDailyBar(
-                            viewModel = viewModel,
-                            modifier = Modifier
-                                .padding(8.dp)
-                        )
-                    }
-                ) { innerPadding ->
-                    MainScreen(
-                        viewModel = viewModel,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(innerPadding)
-                    )
-                }
+                val navController: NavHostController = rememberNavController()
+                App(navController = navController)
             }
         }
     }

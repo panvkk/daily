@@ -51,7 +51,8 @@ dependencies {
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
-    implementation(libs.calendar.compose)
+    implementation(libs.compose.calendar)
+    implementation(libs.compose.colorpicker)
 
     // Coroutines
     implementation(libs.kotlinx.coroutines.core)

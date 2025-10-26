@@ -64,6 +64,17 @@ class MainViewModel @Inject constructor(
         _currentTopic.update { newTopic }
     }
 
+    fun addTopicSpec(topicSpec: TopicSpec) {
+        viewModelScope.launch {
+            _currentTopic.update {
+                _currentTopic.value.copy(
+                    specs = it.specs + topicSpec
+                )
+            }
+            dailyRepository.updateTopic(_currentTopic.value)
+        }
+    }
+
     fun addMark(day: CalendarDay, color: Long) {
         viewModelScope.launch {
             dailyRepository.putMark(

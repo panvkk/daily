@@ -4,7 +4,9 @@ import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.Query
+import androidx.room.Update
 import com.example.daily.data.local.entity.TopicEntity
+import com.example.daily.model.Topic
 import kotlinx.coroutines.flow.Flow
 
 @Dao
@@ -17,4 +19,7 @@ interface TopicDao {
 
     @Delete
     suspend fun deleteTopic(topicEntity: TopicEntity)
+
+    @Update
+    suspend fun updateTopic(topicEntity: TopicEntity)
 }

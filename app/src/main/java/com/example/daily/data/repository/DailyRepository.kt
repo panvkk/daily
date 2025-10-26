@@ -84,4 +84,17 @@ class DailyRepository @Inject constructor(
                 }
             )
         )
+
+    suspend fun updateTopic(topic: Topic) =
+        topicDao.updateTopic(
+            TopicEntity(
+                name = topic.name,
+                specs = topic.specs.map { spec ->
+                    TopicSpecDto(
+                        color = spec.color,
+                        description = spec.description
+                    )
+                }
+            )
+        )
 }

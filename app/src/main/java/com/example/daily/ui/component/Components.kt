@@ -10,7 +10,9 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -38,11 +40,13 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Popup
 import com.example.daily.R
 import com.example.daily.model.Topic
+import com.example.daily.model.TopicSpec
 import com.example.daily.ui.viewmodel.MainViewModel
 import com.kizitonwose.calendar.core.CalendarDay
 
 @Composable
 fun DayPanel(
+    specs: List<TopicSpec>,
     day: CalendarDay,
     addMark: (Long) -> Unit,
     deleteMark: () -> Unit
@@ -52,22 +56,24 @@ fun DayPanel(
             text = day.date.toString(),
             modifier = Modifier.padding(vertical = 8.dp)
         )
-        Text(
-            text = "Покрасить в красный",
-            modifier = Modifier
-                .padding(bottom = 8.dp)
-                .clickable {
-                    addMark(0xFFFF0000)
+        LazyColumn {
+            items(specs) { spec ->
+                Row(
+                    modifier = Modifier
+                        .clickable {
+                            addMark(spec.color)
+                        }
+                ){
+                    Box(
+                        modifier = Modifier
+                            .background(Color(spec.color))
+                            .padding(end = 12.dp)
+                            .size(32.dp)
+                    )
+                    Text(text = spec.description)
                 }
-        )
-        Text(
-            text = "Покрасить в зелёный",
-            modifier = Modifier
-                .padding(bottom = 8.dp)
-                .clickable {
-                    addMark(0xFF008000)
-                }
-        )
+            }
+        }
         Text(
             text = "УДАЛИТЬ",
             modifier = Modifier.clickable {
@@ -81,7 +87,8 @@ fun DayPanel(
 @Composable
 fun TopDailyBar(
     viewModel: MainViewModel,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    navigateSpecs: () -> Unit
 ) {
     val topic = viewModel.currentTopic.collectAsState().value
     val topicList = viewModel.topics.collectAsState().value
@@ -99,8 +106,27 @@ fun TopDailyBar(
                 onNewTopicChoice = { viewModel.updateShowDialogState(true) } ,
                 topicList = topicList
             ) },
+        actions = {
+            TopicSpecIcon(navigateSpecs = navigateSpecs)
+        },
         modifier = modifier
     )
+}
+
+@Composable
+fun TopicSpecIcon(
+    navigateSpecs: () -> Unit
+) {
+    Box(
+        modifier = Modifier
+            .padding(4.dp)
+            .clickable { navigateSpecs() }
+    ) {
+        Icon(
+            painter = painterResource(R.drawable.specs_settings_icon),
+            contentDescription = "Topic specs settings"
+        )
+    }
 }
 
 @Composable
