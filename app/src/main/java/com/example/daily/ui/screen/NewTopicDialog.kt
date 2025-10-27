@@ -1,15 +1,20 @@
 package com.example.daily.ui.screen
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
@@ -29,7 +34,11 @@ fun NewTopicDialog(
         onDismissRequest = onDismiss
     ) {
         Column(
-            modifier = Modifier.background(MaterialTheme.colorScheme.background)
+            modifier = Modifier.fillMaxWidth()
+                .background(MaterialTheme.colorScheme.background)
+                .clip(MaterialTheme.shapes.large),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
             InputField(
                 label = stringResource(R.string.input_topic_name),
@@ -44,7 +53,12 @@ fun NewTopicDialog(
                     onDismiss()
                 }
             ) {
-                Text(text = "Создать")
+                Text(
+                    text = "Создать",
+                    style = MaterialTheme.typography.labelLarge,
+                    color = MaterialTheme.colorScheme.primary,
+                    textAlign = TextAlign.Center
+                )
             }
         }
     }

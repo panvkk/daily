@@ -2,6 +2,8 @@ package com.example.daily.ui.screen
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -22,18 +24,7 @@ fun MainScreen(
     val showNewTopicDialog = viewModel.showDialogState.collectAsState().value
     val currentTopic = viewModel.currentTopic.collectAsState().value
 
-    if(showNewTopicDialog) {
-        NewTopicDialog(
-            onDismiss = { viewModel.updateShowDialogState(false) },
-            onCreateTopic = { name -> viewModel.createTopic(name) }
-        )
-    }
-
-    Column(
-        modifier = modifier.padding(horizontal = 16.dp),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
+    Column {
         DailyCalendar(
             isDaySelected = { day -> day == selectedDay },
             onDayClicked = { day -> viewModel.updateSelectedDay(day) },
@@ -51,5 +42,12 @@ fun MainScreen(
                 specs = currentTopic.specs
             )
         }
+    }
+
+    if(showNewTopicDialog) {
+        NewTopicDialog(
+            onDismiss = { viewModel.updateShowDialogState(false) },
+            onCreateTopic = { name -> viewModel.createTopic(name) }
+        )
     }
 }
