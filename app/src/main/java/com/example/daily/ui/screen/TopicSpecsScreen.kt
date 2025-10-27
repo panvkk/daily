@@ -17,6 +17,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.daily.ui.viewmodel.MainViewModel
 
 @Composable
@@ -40,6 +41,15 @@ fun TopicSpecsScreen(
                     Text(text = spec.description)
                 }
             }
+        }
+        TextButton(
+            modifier = Modifier.padding(16.dp).background(Color.Red),
+            onClick = {
+                viewModel.deleteTopic(topic)
+                navigateHome()
+            }
+        ) {
+            Text(text = "Удалить тему")
         }
         Row(horizontalArrangement = Arrangement.SpaceBetween) {
             TextButton(

@@ -8,9 +8,11 @@ import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -18,7 +20,9 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
@@ -38,11 +42,15 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Popup
+import androidx.lifecycle.viewModelScope
 import com.example.daily.R
 import com.example.daily.model.Topic
 import com.example.daily.model.TopicSpec
 import com.example.daily.ui.viewmodel.MainViewModel
 import com.kizitonwose.calendar.core.CalendarDay
+import kotlinx.coroutines.async
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 @Composable
 fun DayPanel(
@@ -104,6 +112,7 @@ fun TopDailyBar(
             TopicsIcon(
                 onTopicChoice = { topic -> viewModel.updateSelectedTopic(topic) },
                 onNewTopicChoice = { viewModel.updateShowDialogState(true) } ,
+                onDeleteTopic = { topic -> viewModel.deleteTopic(topic) },
                 topicList = topicList
             ) },
         actions = {
@@ -133,6 +142,7 @@ fun TopicSpecIcon(
 fun TopicsIcon(
     topicList: List<Topic>,
     onTopicChoice: (Topic) -> Unit,
+    onDeleteTopic: (Topic) -> Unit,
     onNewTopicChoice: () -> Unit
 ) {
     var expanded by remember { mutableStateOf(false) }
@@ -147,46 +157,79 @@ fun TopicsIcon(
             contentDescription = "topics"
         )
 
-        if(expanded) {
+        AnimatedVisibility( // почему-то не работает(понятно, надо не сразу присваивать expanded, а с задержкой)
+            visible = expanded,
+            enter = slideInVertically(initialOffsetY = { -it },
+                animationSpec = tween(durationMillis = 150)) +
+                    fadeIn(animationSpec = tween(durationMillis = 150)),
+            exit = slideOutVertically(targetOffsetY = { -it },
+                animationSpec = tween(durationMillis = 150)) +
+                    fadeOut(animationSpec = tween(durationMillis = 150))
+        ) {
             Popup(
                 onDismissRequest = { expanded = false }
             ) {
-                AnimatedVisibility( // почему-то не работает
-                    visible = expanded,
-                    enter = slideInVertically(initialOffsetY = { -it },
-                        animationSpec = tween(durationMillis = 150)) +
-                            fadeIn(animationSpec = tween(durationMillis = 300)),
-                    exit = slideOutVertically(targetOffsetY = { -it },
-                        animationSpec = tween(durationMillis = 150)) +
-                            fadeOut(animationSpec = tween(durationMillis = 300))
+
+                Column(
+                    modifier = Modifier
+                        .background(Color.Gray)
+                        .width(200.dp)
                 ) {
-                    Column(
-                        modifier = Modifier
-                            .background(Color.Gray)
-                            .width(150.dp)
-                    ) {
-                        LazyColumn {
-                            items(topicList) { topic ->
-                                DropdownMenuItem(
-                                    text = { Text(text = topic.name) },
+                    LazyColumn {
+                        items(items = topicList, key = { it.name }) { topic ->
+                            Column {
+                                DropdownItem(
+                                    topic = topic,
                                     onClick = {
                                         expanded = false
                                         onTopicChoice(topic)
-                                    }
+                                    },
+                                    onDeleteTopic = { onDeleteTopic(topic) }
                                 )
+                                HorizontalDivider(thickness = 2.dp)
                             }
                         }
-                        DropdownMenuItem(
-                            text = { Text(text = "+") },
-                            onClick = {
-                                expanded = false
-                                onNewTopicChoice()
-                            },
-                            modifier = Modifier.align(Alignment.CenterHorizontally)
-                        )
                     }
-
+                    DropdownMenuItem(
+                        text = { Text(text = "+") },
+                        onClick = {
+                            expanded = false
+                            onNewTopicChoice()
+                        },
+                        modifier = Modifier.align(Alignment.CenterHorizontally)
+                    )
                 }
+            }
+        }
+    }
+}
+
+@Composable
+fun DropdownItem(
+    topic: Topic,
+    onClick: () -> Unit,
+    onDeleteTopic: () -> Unit
+) {
+    var showDeleteIcon by remember { mutableStateOf(false) }
+
+    Row {
+        Box(
+            modifier = Modifier.padding(4.dp)
+                .fillMaxWidth()
+                .weight(1f)
+                .combinedClickable(
+                    onClick = onClick,
+                    onLongClick = { showDeleteIcon = !showDeleteIcon }
+                )
+        ) {
+            Text(text = topic.name)
+        }
+        if(showDeleteIcon) {
+            IconButton(onClick = onDeleteTopic) {
+                Icon(
+                    painter = painterResource(R.drawable.delete_icon),
+                    contentDescription = "delete"
+                )
             }
         }
     }

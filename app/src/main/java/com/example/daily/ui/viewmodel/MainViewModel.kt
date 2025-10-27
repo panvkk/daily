@@ -8,6 +8,7 @@ import com.example.daily.model.Topic
 import com.example.daily.model.TopicSpec
 import com.kizitonwose.calendar.core.CalendarDay
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -22,14 +23,13 @@ import javax.inject.Inject
 class MainViewModel @Inject constructor(
     private val dailyRepository: DailyRepository
 ) : ViewModel() {
-
     val topics = dailyRepository.getAllTopics()
             .stateIn(
                 scope = viewModelScope,
                 started = SharingStarted.WhileSubscribed(5000),
                 initialValue = emptyList()
             )
-    private val _currentTopic = MutableStateFlow<Topic>(Topic("Добавьте бебеб", listOf(TopicSpec(1, "desc"))))
+    private val _currentTopic = MutableStateFlow<Topic>(Topic("dfgsdf", listOf(TopicSpec(1, "adfgsdfg"))))
     val currentTopic: StateFlow<Topic> = _currentTopic
 
     val uiState: StateFlow<Map<String, Long>> = _currentTopic
@@ -65,13 +65,16 @@ class MainViewModel @Inject constructor(
     }
 
     fun addTopicSpec(topicSpec: TopicSpec) {
-        viewModelScope.launch {
-            _currentTopic.update {
-                _currentTopic.value.copy(
-                    specs = it.specs + topicSpec
-                )
+        val topic = _currentTopic.value
+        if(topic != null) {
+            viewModelScope.launch {
+                _currentTopic.update {
+                    topic.copy(
+                        specs = topic.specs + topicSpec
+                    )
+                }
+                dailyRepository.updateTopic(topic)
             }
-            dailyRepository.updateTopic(_currentTopic.value)
         }
     }
 
@@ -79,7 +82,7 @@ class MainViewModel @Inject constructor(
         viewModelScope.launch {
             dailyRepository.putMark(
                 Mark(
-                    topic = _currentTopic.value.name,
+                    topic = _currentTopic.value!!.name,
                     color = color,
                     date = day.date.toString()
                 )
@@ -95,7 +98,7 @@ class MainViewModel @Inject constructor(
                     Mark(
                         date = day.date.toString(),
                         color = color,
-                        topic = _currentTopic.value.name
+                        topic = _currentTopic.value!!.name
                     )
                 )
             }
@@ -110,6 +113,19 @@ class MainViewModel @Inject constructor(
                     specs = listOf(TopicSpec(1, "desc"))
                 )
             )
+        }
+    }
+
+    fun deleteTopic(topic: Topic) {
+        viewModelScope.launch {
+            dailyRepository.deleteTopic(topic)
+        }
+    }
+
+    fun delay(timeMillis: Long) {
+        viewModelScope.launch {
+            delay(timeMillis)
+            return@launch
         }
     }
 }
