@@ -1,5 +1,6 @@
 package com.example.daily.ui.viewmodel
 
+import androidx.compose.material3.rememberDrawerState
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.daily.data.repository.DailyRepository
@@ -12,7 +13,9 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
@@ -29,12 +32,27 @@ class MainViewModel @Inject constructor(
                 started = SharingStarted.WhileSubscribed(5000),
                 initialValue = emptyList()
             )
-    private val _currentTopic = MutableStateFlow<Topic>(Topic("dfgsdf", listOf(TopicSpec(1, "adfgsdfg"))))
-    val currentTopic: StateFlow<Topic> = _currentTopic
+    private val _currentTopic = MutableStateFlow<Topic?>(null)
+    val currentTopic: StateFlow<Topic?> = _currentTopic
+
+    init {
+        viewModelScope.launch {
+            topics.collect { topicList ->
+                if(topicList.isNotEmpty()) {
+                    updateSelectedTopic(topics.value.first())
+                    return@collect
+                }
+            }
+        }
+    }
 
     val uiState: StateFlow<Map<String, Long>> = _currentTopic
         .flatMapLatest { topic ->
-            dailyRepository.getAllMarksByTopic(topic.name)
+            if(topic != null) {
+                dailyRepository.getAllMarksByTopic(topic.name)
+            } else {
+                flowOf(emptyList())
+            }
         }
         .map { markList ->
             markList.associate {
@@ -60,18 +78,19 @@ class MainViewModel @Inject constructor(
         _selectedDay.update { day }
     }
 
-    fun updateSelectedTopic(newTopic: Topic) {
+    fun updateSelectedTopic(newTopic: Topic?) {
         _currentTopic.update { newTopic }
     }
 
     fun addTopicSpec(topicSpec: TopicSpec) {
-        val topic = _currentTopic.value
+        var topic = _currentTopic.value
         if(topic != null) {
+            topic = topic.copy(
+                specs = topic.specs + topicSpec
+            )
             viewModelScope.launch {
                 _currentTopic.update {
-                    topic.copy(
-                        specs = topic.specs + topicSpec
-                    )
+                    topic
                 }
                 dailyRepository.updateTopic(topic)
             }
@@ -107,25 +126,24 @@ class MainViewModel @Inject constructor(
 
     fun createTopic(topicName: String) {
         viewModelScope.launch {
-            dailyRepository.putTopic(
-                Topic(
-                    name = topicName,
-                    specs = listOf(TopicSpec(1, "desc"))
-                )
+            val newTopic = Topic(
+                name = topicName,
+                specs = emptyList()
             )
+            dailyRepository.putTopic(newTopic)
+            delay(300)
+            updateSelectedTopic(newTopic)
         }
     }
 
     fun deleteTopic(topic: Topic) {
         viewModelScope.launch {
+            if(topics.value.size == 1) {
+                updateSelectedTopic(null)
+            } else {
+                updateSelectedTopic(topics.value.first())
+            }
             dailyRepository.deleteTopic(topic)
-        }
-    }
-
-    fun delay(timeMillis: Long) {
-        viewModelScope.launch {
-            delay(timeMillis)
-            return@launch
         }
     }
 }

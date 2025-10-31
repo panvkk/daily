@@ -34,7 +34,7 @@ fun NewTopicDialog(
         onDismissRequest = onDismiss
     ) {
         Column(
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier//.fillMaxWidth()
                 .background(MaterialTheme.colorScheme.background)
                 .clip(MaterialTheme.shapes.large),
             verticalArrangement = Arrangement.Center,

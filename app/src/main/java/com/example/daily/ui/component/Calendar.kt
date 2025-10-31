@@ -1,5 +1,6 @@
 package com.example.daily.ui.component
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -139,7 +140,14 @@ fun Day(
             .aspectRatio(1f) // This is important for square sizing!
             .clickable { if(!isSelected(day)) { onClickBehavior(day) } }
             .padding(1.dp),
-        border = if(isSelected(day)) CardDefaults.outlinedCardBorder(true) else null,
+        border = if(isSelected(day)) {
+            val color = markColor(day)
+            if(color != null) {
+                BorderStroke(width = 2.dp, color = Color(color))
+            } else {
+                CardDefaults.outlinedCardBorder(true)
+            }
+        } else null,
         colors = CardDefaults.cardColors(
             containerColor = if(isSelected(day)) {
                     MaterialTheme.colorScheme.surfaceContainer

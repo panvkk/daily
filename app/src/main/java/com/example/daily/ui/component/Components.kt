@@ -119,32 +119,42 @@ fun DayPanel(
 fun TopDailyBar(
     viewModel: MainViewModel,
     modifier: Modifier = Modifier,
-    navigateSpecs: () -> Unit
+    openDrawer: () -> Unit,
 ) {
     val topic = viewModel.currentTopic.collectAsState().value
     val topicList = viewModel.topics.collectAsState().value
 
-    TopAppBar(
-        title = {
+    if(topic != null) {
+        TopAppBar(
+            title = {
+                Text(
+                    text = topic.name,
+                    style = MaterialTheme.typography.displaySmall,
+                    color = MaterialTheme.colorScheme.onBackground,
+                    textAlign = TextAlign.Center
+                )
+            },
+            navigationIcon = {
+                TopicsIcon(
+                    onTopicChoice = { topic -> viewModel.updateSelectedTopic(topic) },
+                    onNewTopicChoice = { viewModel.updateShowDialogState(true) },
+                    onDeleteTopic = { topic -> viewModel.deleteTopic(topic) },
+                    topicList = topicList
+                )
+            },
+            actions = {
+                TopicSpecIcon(navigateSpecs = openDrawer)
+            },
+            modifier = modifier
+        )
+    } else {
+        TopAppBar(title = {
             Text(
-                text = topic.name,
-                style = MaterialTheme.typography.displaySmall,
-                color = MaterialTheme.colorScheme.onBackground,
+                text = "Daily",
                 textAlign = TextAlign.Center
             )
-        },
-        navigationIcon = {
-            TopicsIcon(
-                onTopicChoice = { topic -> viewModel.updateSelectedTopic(topic) },
-                onNewTopicChoice = { viewModel.updateShowDialogState(true) } ,
-                onDeleteTopic = { topic -> viewModel.deleteTopic(topic) },
-                topicList = topicList
-            ) },
-        actions = {
-            TopicSpecIcon(navigateSpecs = navigateSpecs)
-        },
-        modifier = modifier
-    )
+        })
+    }
 }
 
 @Composable

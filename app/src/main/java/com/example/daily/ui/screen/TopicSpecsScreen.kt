@@ -27,17 +27,18 @@ import com.example.daily.ui.viewmodel.MainViewModel
 fun TopicSpecsScreen(
     viewModel: MainViewModel,
     navigateToSpecCreator: () -> Unit,
-    navigateHome: () -> Unit
+    navigateBack: () -> Unit,
+    modifier: Modifier = Modifier
 ) {
     val topic = viewModel.currentTopic.collectAsState().value
 
     Column(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = modifier,
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         LazyColumn {
-            items(topic.specs) { spec ->
+            items(topic!!.specs) { spec ->
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.SpaceEvenly
@@ -59,14 +60,14 @@ fun TopicSpecsScreen(
         }
         ButtonPassive(
             onClick = {
-                viewModel.deleteTopic(topic)
-                navigateHome()
+                if(topic != null) viewModel.deleteTopic(topic)
+                navigateBack()
             },
             title = "Удалить раздел"
         )
         Row(horizontalArrangement = Arrangement.SpaceBetween) {
             TextButton(
-                onClick = navigateHome
+                onClick = navigateBack
             ) {
                 Text(
                     text = "Назад",
