@@ -50,6 +50,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Popup
 import com.example.daily.R
@@ -69,7 +70,6 @@ fun DayPanel(
 ) {
     Column(
         verticalArrangement = Arrangement.Center,
-//        horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
             text = "${day.date.dayOfMonth} ${day.date.month.getDisplayName(TextStyle.FULL, Locale.getDefault())} ${day.date.year}",
@@ -78,39 +78,45 @@ fun DayPanel(
             textAlign = TextAlign.Start,
             modifier = Modifier.padding(16.dp)
         )
-        LazyColumn {
-            items(specs) { spec ->
-                Row(
-                    modifier = Modifier
-                        .clickable {
-                            addMark(spec.color)
-                        }
-                ){
-                    Box(
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.SpaceEvenly,
+            modifier = Modifier.fillMaxSize()
+        ) {
+            LazyColumn {
+                items(specs) { spec ->
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
                         modifier = Modifier
-                            .background(Color(spec.color))
-                            .padding(end = 12.dp)
-                            .size(32.dp)
-                    )
-                    Text(
-                        text = spec.description,
-                        style = MaterialTheme.typography.labelLarge,
-                        color = MaterialTheme.colorScheme.primary,
-                        textAlign = TextAlign.Center
-                    )
+                            .padding(8.dp)
+                            .clickable { addMark(spec.color) }
+                    ) {
+                        ColorBox(
+                            color = Color(spec.color),
+                            modifier = Modifier.padding(end = 8.dp),
+                            size = 52.dp
+                        )
+                        Text(
+                            text = spec.description,
+                            style = MaterialTheme.typography.titleMedium,
+                            color = MaterialTheme.colorScheme.onSecondaryContainer,
+                            textAlign = TextAlign.Center
+                        )
+                    }
                 }
             }
+            TextButton(
+                onClick = { deleteMark() }
+            ) {
+                Text(
+                    text = "Удалить метку",
+                    style = MaterialTheme.typography.labelLarge,
+                    color = MaterialTheme.colorScheme.tertiary,
+                    textAlign = TextAlign.Center
+                )
+            }
         }
-        TextButton(
-            onClick = { deleteMark() }
-        ) {
-            Text(
-                text = "Удалить",
-                style = MaterialTheme.typography.labelLarge,
-                color = MaterialTheme.colorScheme.primary,
-                textAlign = TextAlign.Center
-            )
-        }
+
     }
 }
 
@@ -161,18 +167,25 @@ fun TopDailyBar(
 fun TopicSpecIcon(
     navigateSpecs: () -> Unit
 ) {
-    Box(
+    Column(
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier
             .padding(4.dp)
-            .size(32.dp)
-            .clickable { navigateSpecs() },
-        contentAlignment = Alignment.Center
+            .size(48.dp)
+            .clickable { navigateSpecs() }
     ) {
-        Icon(
-            painter = painterResource(R.drawable.specs_settings_icon),
-            contentDescription = "Topic specs settings",
-            modifier = Modifier.fillMaxSize()
-        )
+        Box(
+            modifier = Modifier
+                .size(28.dp),
+            contentAlignment = Alignment.Center
+        ) {
+            Icon(
+                painter = painterResource(R.drawable.specs_settings_icon),
+                contentDescription = "Topic specs settings",
+                modifier = Modifier.fillMaxSize()
+            )
+        }
     }
 }
 
@@ -186,11 +199,13 @@ fun TopicsIcon(
     var expanded by remember { mutableStateOf(false) }
 
     Box(
+        contentAlignment = Alignment.Center,
         modifier = Modifier
             .padding(end = 16.dp, start = 4.dp, top = 4.dp, bottom = 4.dp)
-            .size(32.dp)
-            .clickable { if (!expanded) expanded = true },
+            .size(28.dp)
+            .clickable { if (!expanded) expanded = true }
     ) {
+
         Icon(
             painter = painterResource(R.drawable.topic_icon),
             contentDescription = "topics",
@@ -380,4 +395,22 @@ fun ButtonActive(
             textAlign = TextAlign.Center
         )
     }
+}
+
+@Composable
+fun ColorBox(
+    color: Color,
+    modifier: Modifier = Modifier,
+    size: Dp = 40.dp
+) {
+    Card (
+        colors = CardDefaults.cardColors(
+            containerColor = color
+        ),
+        shape = MaterialTheme.shapes.small,
+        border = CardDefaults.outlinedCardBorder(),
+        modifier = modifier
+            .height(size)
+            .width(size)
+    ) {    }
 }

@@ -13,6 +13,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
@@ -37,12 +38,8 @@ class MainViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-            topics.collect { topicList ->
-                if(topicList.isNotEmpty()) {
-                    updateSelectedTopic(topics.value.first())
-                    return@collect
-                }
-            }
+            val topicList = topics.first { it.isNotEmpty() }
+            updateSelectedTopic(topicList.first())
         }
     }
 
@@ -89,9 +86,7 @@ class MainViewModel @Inject constructor(
                 specs = topic.specs + topicSpec
             )
             viewModelScope.launch {
-                _currentTopic.update {
-                    topic
-                }
+                updateSelectedTopic(topic)
                 dailyRepository.updateTopic(topic)
             }
         }

@@ -3,19 +3,17 @@ package com.example.daily.ui.screen
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.toString
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -24,8 +22,11 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import com.example.daily.model.TopicSpec
+import com.example.daily.ui.component.ColorBox
 import com.example.daily.ui.component.InputField
 import com.example.daily.ui.viewmodel.SpecCreatorVM
+import com.github.skydoves.colorpicker.compose.AlphaSlider
+import com.github.skydoves.colorpicker.compose.BrightnessSlider
 import com.github.skydoves.colorpicker.compose.ColorEnvelope
 import com.github.skydoves.colorpicker.compose.HsvColorPicker
 import com.github.skydoves.colorpicker.compose.rememberColorPickerController
@@ -34,7 +35,7 @@ import com.github.skydoves.colorpicker.compose.rememberColorPickerController
 fun SpecCreatorScreen(
     viewModel: SpecCreatorVM,
     onCrateSpec: (TopicSpec) -> Unit,
-    navigateTopicSpecs: () -> Unit
+    navigateHome: () -> Unit
 ) {
     val input = viewModel.inputDescription.collectAsState().value
     val pickedColor = viewModel.pickedColor.collectAsState().value
@@ -45,23 +46,25 @@ fun SpecCreatorScreen(
     }
 
     Column(
-        modifier = Modifier.fillMaxWidth(),
-        verticalArrangement = Arrangement.Center,
+        modifier = Modifier.fillMaxSize(),
+        verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         if(pickedColor != null) {
-            Row {
-                Box(
-                    modifier = Modifier
-                        .background(Color(pickedColor))
-                        .padding(end = 12.dp)
-                        .size(32.dp)
-                        .clickable {
-                            viewModel.updatePickerVisibility(true)
-                        }
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier
+                    .padding(8.dp)
+                    .clickable {
+                        viewModel.updatePickerVisibility(true)
+                    }
+            ) {
+                ColorBox(
+                    color = Color(pickedColor),
+                    modifier = Modifier.padding(end = 12.dp)
                 )
                 Text(
-                    text = pickedColor.toString(16),
+                    text = String.format("#%08X", pickedColor),
                     style = MaterialTheme.typography.bodyLarge,
                     color = MaterialTheme.colorScheme.onSurface,
                     textAlign = TextAlign.Center
@@ -94,7 +97,7 @@ fun SpecCreatorScreen(
                             description = input
                         )
                     )
-                    navigateTopicSpecs()
+                    navigateHome()
                 }
             }
         ) {
@@ -135,6 +138,32 @@ fun ColorPicker(
                     viewModel.updateColor(colorEnvelope.hexCode.toLong(16))
                 }
             )
+            AlphaSlider(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(10.dp)
+                    .height(35.dp),
+                controller = controller
+            )
+            BrightnessSlider(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(10.dp)
+                    .height(35.dp),
+                controller = controller,
+            )
+            if(color != null) {
+                val hex = String.format("#%08X", color)
+                Column {
+                    Text(
+                        text = hex,
+                        color = Color(color)
+                    )
+                    ColorBox(
+                        color = Color(color)
+                    )
+                }
+            }
             TextButton(
                 onClick =  {
                     if(color != null) {
