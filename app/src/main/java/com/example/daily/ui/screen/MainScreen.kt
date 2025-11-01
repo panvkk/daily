@@ -4,29 +4,43 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.DismissibleDrawerSheet
 import androidx.compose.material3.DrawerState
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
+import com.example.daily.model.TopicSpec
 import com.example.daily.ui.component.ButtonActive
+import com.example.daily.ui.component.ColorBox
 import com.example.daily.ui.component.DailyCalendar
-import com.example.daily.ui.component.DayPanel
 import com.example.daily.ui.viewmodel.MainViewModel
+import com.kizitonwose.calendar.core.CalendarDay
 import kotlinx.coroutines.launch
+import java.time.format.TextStyle
+import java.util.Locale
 
 @Composable
 fun MainScreen(
@@ -133,5 +147,80 @@ fun MainScreen(
                 title = "Создать"
             )
         }
+    }
+}
+
+@Composable
+fun DayPanel(
+    specs: List<TopicSpec>,
+    day: CalendarDay,
+    addMark: (Long) -> Unit,
+    deleteMark: () -> Unit
+) {
+    Column(
+        verticalArrangement = Arrangement.Center,
+    ) {
+        Text(
+            text = "${day.date.dayOfMonth} ${day.date.month.getDisplayName(TextStyle.FULL, Locale.getDefault())} ${day.date.year}",
+            style = MaterialTheme.typography.titleLarge,
+            color = MaterialTheme.colorScheme.onSurface,
+            textAlign = TextAlign.Start,
+            modifier = Modifier.padding(16.dp)
+        )
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.SpaceEvenly,
+            modifier = Modifier.fillMaxSize()
+        ) {
+            LazyColumn(
+                verticalArrangement = Arrangement.spacedBy(8.dp),
+                 modifier = Modifier.weight(1f)
+            ) {
+                items(specs) { spec ->
+                    Card(
+                        shape = MaterialTheme.shapes.large,
+                        colors = CardDefaults.cardColors(
+                            containerColor = MaterialTheme.colorScheme.surface
+                        ),
+                        border = CardDefaults.outlinedCardBorder(),
+                        modifier = Modifier
+                            .height(70.dp)
+                            .width(320.dp)
+                            .clickable { addMark(spec.color) }
+                    ) {
+                        Row(
+                            modifier = Modifier
+                                .padding(start = 8.dp)
+                                .fillMaxHeight(),
+                            verticalAlignment = Alignment.CenterVertically,
+                        ) {
+                            ColorBox(
+                                color = Color(spec.color),
+                                modifier = Modifier.padding(end = 8.dp),
+                                size = 48.dp
+                            )
+                            Text(
+                                text = spec.description,
+                                style = MaterialTheme.typography.titleMedium,
+                                color = MaterialTheme.colorScheme.onSecondaryContainer,
+                                textAlign = TextAlign.Center
+                            )
+                        }
+                    }
+                }
+            }
+            TextButton(
+                onClick = { deleteMark() },
+                modifier = Modifier
+            ) {
+                Text(
+                    text = "Удалить метку",
+                    style = MaterialTheme.typography.labelLarge,
+                    color = MaterialTheme.colorScheme.tertiary,
+                    textAlign = TextAlign.Center
+                )
+            }
+        }
+
     }
 }

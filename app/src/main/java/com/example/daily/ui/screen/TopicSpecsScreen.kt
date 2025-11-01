@@ -1,9 +1,11 @@
 package com.example.daily.ui.screen
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -37,12 +39,14 @@ fun TopicSpecsScreen(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Column {
-            LazyColumn {
+            LazyColumn(
+                verticalArrangement = Arrangement.spacedBy(8.dp),
+                modifier = Modifier.padding(start = 16.dp)
+            ) {
                 items(topic!!.specs) { spec ->
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.SpaceEvenly,
-                        modifier = Modifier.padding(8.dp)
                     ) {
                         ColorBox(
                             color = Color(spec.color),
@@ -57,10 +61,15 @@ fun TopicSpecsScreen(
                     }
                 }
             }
-            ButtonActive(
-                onClick = navigateToSpecCreator,
-                title = "Добавить"
-            )
+            Box(
+                modifier = Modifier.fillMaxWidth(),
+                contentAlignment = Alignment.Center
+            ) {
+                ButtonActive(
+                    onClick = navigateToSpecCreator,
+                    title = "Добавить",
+                )
+            }
         }
         TextButton(
             onClick = navigateToSpecCreator
