@@ -1,5 +1,10 @@
 package com.example.daily
 
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.DrawerValue
@@ -31,6 +36,11 @@ fun App(
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
 
+    val screenHierarchy = mapOf(
+        "home" to 1,
+        "spec_creator" to 2
+    )
+
     Scaffold(
         containerColor = MaterialTheme.colorScheme.background,
         topBar = {
@@ -48,9 +58,31 @@ fun App(
         NavHost(
             startDestination = "home",
             navController = navController,
-            modifier = Modifier.padding(innerPadding)
+            modifier = Modifier.padding(innerPadding),
+            enterTransition = {
+                val from = screenHierarchy[initialState.destination.route] ?: 0
+                val to = screenHierarchy[targetState.destination.route] ?: 0
+                if (to > from) {
+                    slideInHorizontally(initialOffsetX = { it }, animationSpec = tween(200)) +
+                            fadeIn(animationSpec = tween(200))
+                } else {
+                    slideInHorizontally(initialOffsetX = { -it }, animationSpec = tween(200)) +
+                            fadeIn(animationSpec = tween(200))
+                }
+            },
+            exitTransition = {
+                val from = screenHierarchy[initialState.destination.route] ?: 0
+                val to = screenHierarchy[targetState.destination.route] ?: 0
+                if(to > from) {
+                    slideOutHorizontally(targetOffsetX = { -it }, animationSpec = tween(200)) +
+                            fadeOut(animationSpec = tween(200) )
+                } else {
+                    slideOutHorizontally(targetOffsetX = { it }, animationSpec = tween(200)) +
+                            fadeOut(animationSpec = tween(200) )
+                }
+            }
         ) {
-            composable(route = "home") {
+            composable(route = "home", ) {
                 MainScreen(
                     viewModel = mainViewModel,
                     drawerState = drawerState,
@@ -58,13 +90,6 @@ fun App(
                     modifier = Modifier.fillMaxWidth()
                 )
             }
-            //            composable(route = "topic_specs") {
-            //                TopicSpecsScreen(
-            //                    viewModel = mainViewModel,
-            //                    navigateToSpecCreator = { navController.navigate("spec_creator") },
-            //                    navigateHome = { navController.navigate("home") }
-            //                )
-            //            }
             composable(route = "spec_creator") { backStackEntry ->
                 val owner = remember(backStackEntry) {
                     navController.getBackStackEntry("spec_creator")

@@ -84,18 +84,28 @@ fun MainScreen(
                         )
                         if (selectedDay != null) {
                             if (currentTopic.specs.isEmpty()) {
-                                Box(
-                                    contentAlignment = Alignment.Center,
-                                    modifier = Modifier.clickable {
-                                        scope.launch { drawerState.open() }
-                                    }
+                                Column(
+                                    modifier = Modifier.fillMaxSize(),
+                                    verticalArrangement = Arrangement.Center,
+                                    horizontalAlignment = Alignment.CenterHorizontally
                                 ) {
                                     Text(
-                                        text = "Создайте метку",
-                                        style = MaterialTheme.typography.displaySmall,
+                                        text = "Пусто!",
+                                        style = MaterialTheme.typography.titleLarge,
                                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                                         textAlign = TextAlign.Center,
-                                        modifier = Modifier.fillMaxSize()
+                                        modifier = Modifier.padding(bottom = 8.dp)
+                                    )
+                                    Text(
+                                        text = "Создайте свою метку",
+                                        style = MaterialTheme.typography.bodyLarge,
+                                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                        textAlign = TextAlign.Center,
+                                        modifier = Modifier.padding(bottom = 8.dp)
+                                    )
+                                    ButtonActive(
+                                        onClick = { scope.launch { drawerState.open() } },
+                                        title = "Создать"
                                     )
                                 }
                             } else {
@@ -113,14 +123,15 @@ fun MainScreen(
                         }
                     }
 
-                    if(showNewTopicDialog) {
-                        NewTopicDialog(
-                            onDismiss = { viewModel.updateShowDialogState(false) },
-                            onCreateTopic = { name -> viewModel.createTopic(name) }
-                        )
-                    }
+
                 }
             }
+        }
+        if(showNewTopicDialog) {
+            NewTopicDialog(
+                onDismiss = { viewModel.updateShowDialogState(false) },
+                onCreateTopic = { name -> viewModel.createTopic(name) }
+            )
         }
     } else {
         Column(

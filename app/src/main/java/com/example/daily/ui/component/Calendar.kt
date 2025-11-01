@@ -1,5 +1,6 @@
 package com.example.daily.ui.component
 
+import android.R
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -152,8 +153,11 @@ fun Day(
             containerColor = if(isSelected(day)) {
                     MaterialTheme.colorScheme.surfaceContainer
                 } else {
-                    if(color != null && day.position == DayPosition.MonthDate)
-                        Color(color) else MaterialTheme.colorScheme.surfaceVariant
+                    if(color != null) {
+                        if(day.position == DayPosition.MonthDate) {
+                            Color(color)
+                        } else Color(color).copy(alpha = 0.2f)
+                    } else MaterialTheme.colorScheme.surfaceVariant
                 }
         )
     ) {

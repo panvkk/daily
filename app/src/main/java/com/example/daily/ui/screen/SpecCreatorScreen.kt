@@ -22,6 +22,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import com.example.daily.model.TopicSpec
+import com.example.daily.ui.component.ButtonActive
 import com.example.daily.ui.component.ColorBox
 import com.example.daily.ui.component.InputField
 import com.example.daily.ui.viewmodel.SpecCreatorVM
@@ -50,62 +51,69 @@ fun SpecCreatorScreen(
         verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        if(pickedColor != null) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier
-                    .padding(8.dp)
-                    .clickable {
-                        viewModel.updatePickerVisibility(true)
-                    }
-            ) {
-                ColorBox(
-                    color = Color(pickedColor),
-                    modifier = Modifier.padding(end = 12.dp)
-                )
-                Text(
-                    text = String.format("#%08X", pickedColor),
-                    style = MaterialTheme.typography.bodyLarge,
-                    color = MaterialTheme.colorScheme.onSurface,
-                    textAlign = TextAlign.Center
-                )
+        Column(
+            verticalArrangement = Arrangement.spacedBy(12.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            if(pickedColor != null) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier
+                        .padding(8.dp)
+                        .clickable {
+                            viewModel.updatePickerVisibility(true)
+                        }
+                ) {
+                    ColorBox(
+                        color = Color(pickedColor),
+                        modifier = Modifier.padding(end = 12.dp)
+                    )
+                    Text(
+                        text = String.format("#%08X", pickedColor),
+                        style = MaterialTheme.typography.bodyLarge,
+                        color = MaterialTheme.colorScheme.onSurface,
+                        textAlign = TextAlign.Center
+                    )
+                }
+            } else {
+                TextButton(
+                    onClick = { viewModel.updatePickerVisibility(true) }
+                ) {
+                    Text(
+                        "Выберите цвет",
+                        style = MaterialTheme.typography.labelLarge,
+                        color = MaterialTheme.colorScheme.primary,
+                        textAlign = TextAlign.Center
+                    )
+                }
             }
-        } else {
-            TextButton(
-                onClick = { viewModel.updatePickerVisibility(true) }
-            ) {
+            InputField(
+                label = "Описание",
+                value = input,
+                onValueChange = { viewModel.updateInput(it) }
+            )
+            TextButton(onClick = navigateHome) {
                 Text(
-                    "Выберите цвет",
+                    text = "Назад",
                     style = MaterialTheme.typography.labelLarge,
                     color = MaterialTheme.colorScheme.primary,
                     textAlign = TextAlign.Center
                 )
             }
-        }
-        InputField(
-            label = "Описание",
-            value = input,
-            onValueChange = { viewModel.updateInput(it) }
-        )
-        TextButton(
-            modifier = Modifier.padding(vertical = 16.dp),
-            onClick = {
-                if(pickedColor != null && input.isNotBlank()) {
-                    onCrateSpec(
-                        TopicSpec(
-                            color = pickedColor,
-                            description = input
+            ButtonActive(
+                title = "Подтвердить",
+                onClick = {
+                    if(pickedColor != null && input.isNotBlank()) {
+                        onCrateSpec(
+                            TopicSpec(
+                                color = pickedColor,
+                                description = input
+                            )
                         )
-                    )
-                    navigateHome()
+                        navigateHome()
+                    }
                 }
-            }
-        ) {
-            Text(
-                text = "Подтвердить",
-                style = MaterialTheme.typography.labelLarge,
-                color = MaterialTheme.colorScheme.primary,
-                textAlign = TextAlign.Center
             )
         }
     }
@@ -154,7 +162,7 @@ fun ColorPicker(
             )
             if(color != null) {
                 val hex = String.format("#%08X", color)
-                Column {
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
                     Text(
                         text = hex,
                         color = Color(color)

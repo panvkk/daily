@@ -8,6 +8,7 @@ import com.example.daily.model.Mark
 import com.example.daily.model.Topic
 import com.example.daily.model.TopicSpec
 import com.kizitonwose.calendar.core.CalendarDay
+import com.kizitonwose.calendar.core.DayPosition
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -21,6 +22,7 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import java.time.LocalDate
 import javax.inject.Inject
 
 @HiltViewModel
@@ -61,7 +63,8 @@ class MainViewModel @Inject constructor(
             started = SharingStarted.WhileSubscribed(5000),
             initialValue = emptyMap()
         )
-    private val _selectedDay = MutableStateFlow<CalendarDay?>(null)
+    private val _selectedDay = MutableStateFlow<CalendarDay?>(
+        CalendarDay(LocalDate.now(), DayPosition.MonthDate))
     val selectedDay: StateFlow<CalendarDay?> = _selectedDay
 
     private val _showDialogState = MutableStateFlow(false)

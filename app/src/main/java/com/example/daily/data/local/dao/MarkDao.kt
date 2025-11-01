@@ -30,4 +30,7 @@ interface MarkDao {
 
     @Query("DELETE FROM mark_table WHERE id = :id ")
     suspend fun deleteMarkById(id: Int)
+
+    @Query("DELETE FROM mark_table WHERE date = :date AND topic = :topic")
+    suspend fun deleteMarks(date: String, topic: String)
 }

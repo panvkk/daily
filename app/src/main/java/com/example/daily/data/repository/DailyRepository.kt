@@ -27,13 +27,19 @@ class DailyRepository @Inject constructor(
                 }
             }
 
-    suspend fun putMark(mark: Mark) = markDao.putMark(
-        MarkEntity(
-            color = mark.color,
+    suspend fun putMark(mark: Mark)  {
+        markDao.deleteMarks(
             date = mark.date,
             topic = mark.topic
         )
-    )
+        markDao.putMark(
+            MarkEntity(
+                color = mark.color,
+                date = mark.date,
+                topic = mark.topic
+            )
+        )
+    }
 
     suspend fun deleteMark(mark: Mark) = markDao.deleteMark(
         MarkEntity(

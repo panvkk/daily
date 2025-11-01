@@ -72,7 +72,10 @@ fun TopicSpecsScreen(
             }
         }
         TextButton(
-            onClick = navigateToSpecCreator
+            onClick = {
+                if(topic != null) viewModel.deleteTopic(topic)
+                navigateBack()
+            }
         ) {
             Text(
                 text = "Удалить раздел",
