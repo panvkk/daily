@@ -2,7 +2,6 @@ package com.example.daily.ui.screen
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -127,12 +126,6 @@ fun MainScreen(
                 }
             }
         }
-        if(showNewTopicDialog) {
-            NewTopicDialog(
-                onDismiss = { viewModel.updateShowDialogState(false) },
-                onCreateTopic = { name -> viewModel.createTopic(name) }
-            )
-        }
     } else {
         Column(
             modifier = Modifier.fillMaxSize(),
@@ -158,6 +151,12 @@ fun MainScreen(
                 title = "Создать"
             )
         }
+    }
+    if(showNewTopicDialog) {
+        NewTopicDialog(
+            onDismiss = { viewModel.updateShowDialogState(false) },
+            onCreateTopic = { name -> viewModel.createTopic(name) }
+        )
     }
 }
 
