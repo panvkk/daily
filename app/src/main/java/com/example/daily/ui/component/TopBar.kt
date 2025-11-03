@@ -1,9 +1,14 @@
 package com.example.daily.ui.component
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.LinearOutSlowInEasing
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.scaleOut
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.background
@@ -40,6 +45,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -144,16 +150,24 @@ fun TopicsIcon(
             Popup(
                 onDismissRequest = { expanded = false }
             ) {
-                AnimatedVisibility( // почему-то не работает
+                AnimatedVisibility(
                     visible = expanded,
-                    enter = slideInVertically(
-                        initialOffsetY = { -it },
-                        animationSpec = tween(durationMillis = 150)
-                    ) + fadeIn(animationSpec = tween(durationMillis = 150)),
-                    exit = slideOutVertically(
-                        targetOffsetY = { -it },
-                        animationSpec = tween(durationMillis = 150)
-                    ) + fadeOut(animationSpec = tween(durationMillis = 150))
+                    enter = scaleIn(
+                        tween(
+                            durationMillis = 150,
+                            easing = LinearOutSlowInEasing
+                        ),
+                        transformOrigin = TransformOrigin(0f, 0f),
+                        initialScale = 0.6f,
+                    ) + fadeIn(tween(150)) ,
+                    exit = scaleOut(
+                        tween(
+                            durationMillis = 150,
+                            easing = LinearOutSlowInEasing
+                        ),
+                        transformOrigin = TransformOrigin(0f, 0f),
+                        targetScale = 0.6f,
+                    ) + fadeOut(tween(150))
                 ) {
                     Card(
                         shape = RoundedCornerShape(
