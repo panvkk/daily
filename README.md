@@ -5,11 +5,10 @@ Daily — это современное Android-приложение для ги
 # 📸 Screenshots
 
 <p align="center">
-<img src="[photo_2026-02-27_22-33-26](https://github.com/user-attachments/assets/2b0cec63-8d49-4b8b-ac32-e49c9c0f585e)" width="250" alt="Main Screen">
-<img src="[photo_2_2026-02-27_22-23-35](https://github.com/user-attachments/assets/f2dfbcdc-a781-4ceb-8acd-0b17d8474363)" width="250" alt="Marks">
-<img src="[photo_3_2026-02-27_22-23-35](https://github.com/user-attachments/assets/ccf10b13-f5eb-4c57-9032-a4b93150bc4e)" width="250" alt="Customization">
+<img src="https://www.google.com/search?q=https://github.com/user-attachments/assets/2b0cec63-8d49-4b8b-ac32-e49c9c0f585e" width="250" alt="Main Screen">
+<img src="https://www.google.com/search?q=https://github.com/user-attachments/assets/f2dfbcdc-a781-4ceb-8acd-0b17d8474363" width="250" alt="Marks">
+<img src="https://www.google.com/search?q=https://github.com/user-attachments/assets/ccf10b13-f5eb-4c57-9032-a4b93150bc4e" width="250" alt="Customization">
 </p>
-
 # 🛠 Tech Stack
 
 **Language**: Kotlin + Coroutines & Flow (реактивные потоки данных).
