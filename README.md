@@ -9,6 +9,7 @@ Daily — это современное Android-приложение для ги
 <img src="https://github.com/user-attachments/assets/f2dfbcdc-a781-4ceb-8acd-0b17d8474363" width="250" alt="Marks">
 <img src="https://github.com/user-attachments/assets/ccf10b13-f5eb-4c57-9032-a4b93150bc4e" width="250" alt="Customization">
 </p>
+
 # 🛠 Tech Stack
 
 **Language**: Kotlin + Coroutines & Flow (реактивные потоки данных).
