@@ -5,7 +5,7 @@ Daily — это современное Android-приложение для ги
 # 📸 Screenshots
 
 <p align="center">
-<img src="[photo-1]((https://github.com/user-attachments/assets/0aa8acb6-9ba1-48ce-8cc6-ce21bca58a92)" width="250" alt="Main Screen">
+<img src="[photo-1](https://github.com/user-attachments/assets/0aa8acb6-9ba1-48ce-8cc6-ce21bca58a92)" width="250" alt="Main Screen">
 <img src="[photo-2](https://github.com/user-attachments/assets/ec89e6e9-b198-4ea0-9c8d-ec610c17f356)" width="250" alt="Marks">
 <img src="[photo-3](https://github.com/user-attachments/assets/aef145c6-4f53-4876-9d5a-b0c4b0c2ee2a)" width="250" alt="Customization">
 </p>
